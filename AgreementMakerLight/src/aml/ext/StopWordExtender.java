@@ -49,14 +49,14 @@ public class StopWordExtender implements LexiconExtender
 		AML aml = AML.getInstance();
 		s = aml.getSizeClasses();
 		Lexicon source = aml.getSource().getLexicon();
-		extend(source);
+		extend(source,aml.getSource().getURI());
 		Lexicon target = aml.getTarget().getLexicon();
-		extend(target);
+		extend(target,aml.getTarget().getURI());
 	}
 	
 //Private Methods
 	
-	private void extend(Lexicon l)
+	private void extend(Lexicon l, String ontologyName)
 	{
 		//Process Classes (remove only leading and trailing stop words)
 		Vector<String> nm = new Vector<String>(l.getNames(EntityType.CLASS));
@@ -102,7 +102,7 @@ public class StopWordExtender implements LexiconExtender
 				for(Provenance p : l.get(n, i))
 				{
 					double weight = p.getWeight() * WEIGHT;
-					l.add(i, newName, p.getLanguage(),
+					l.add(ontologyName, i, newName, p.getLanguage(),
 							LexicalType.INTERNAL_SYNONYM, p.getSource(), weight);
 				}
 			}
@@ -136,7 +136,7 @@ public class StopWordExtender implements LexiconExtender
 					for(Provenance p : l.get(n, i))
 					{
 						double weight = p.getWeight() * WEIGHT;
-						l.add(i, newName, p.getLanguage(),
+						l.add(ontologyName, i, newName, p.getLanguage(),
 								LexicalType.INTERNAL_SYNONYM, p.getSource(), weight);
 					}
 				}

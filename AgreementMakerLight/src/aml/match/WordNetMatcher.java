@@ -176,7 +176,7 @@ public class WordNetMatcher implements PrimaryMatcher, LexiconExtender
 				if(weight < thresh)
 					continue;
 				for(String w : wordForms)
-					l.add(i, w, "en", TYPE, SOURCE, weight);
+					l.add("", i, w, "en", TYPE, SOURCE, weight);
 			}
 		}
 	}

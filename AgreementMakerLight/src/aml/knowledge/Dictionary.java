@@ -90,7 +90,7 @@ public class Dictionary
 	 * Translates a given Lexicon
 	 * @param l: the Lexicon to translate
 	 */
-	public void translateLexicon(Lexicon l)
+	public void translateLexicon(Lexicon l, String ontologyName)
 	{
 		//Initialize the file writer
 		BufferedWriter outStream = null;
@@ -141,7 +141,7 @@ public class Dictionary
 				//If we have a translation, extend the Lexicon with it
 				if(!trans.equals(""))
 					for(Integer i : l.getEntitiesWithLanguage(e,n,sourceLang))
-						l.add(i, trans, targetLang, TYPE, SOURCE, l.getWeight(n, i));
+						l.add(ontologyName, i, trans, targetLang, TYPE, SOURCE, l.getWeight(n, i));
 			}
 		}
 		if(outStream != null)

@@ -357,6 +357,7 @@ public class Ontology
 	//Builds the ontology data structures
 	private void init(OWLOntology o)
 	{
+
 		//Check if the ontology is in SKOS format
 		if(o.containsClassInSignature(SKOS.CONCEPT_SCHEME.toIRI()) &&
 				o.containsClassInSignature(SKOS.CONCEPT.toIRI()))
@@ -431,7 +432,7 @@ public class Ontology
 			{
 				type = LexicalType.LOCAL_NAME;
 				weight = type.getDefaultWeight();
-				lex.add(id, name, "en", type, "", weight);
+				lex.add(o.getOntologyID().getOntologyIRI().toString(), id, name, "en", type, "", weight);
 			}
 
 			//Now get the class's annotations (including imports)
@@ -451,7 +452,7 @@ public class Ontology
 						String lang = val.getLang();
 						if(lang.equals(""))
 							lang = "en";
-						lex.add(id, name, lang, type, "", weight);
+						lex.add(o.getOntologyID().getOntologyIRI().toString(), id, name, lang, type, "", weight);
 					}
 					else if(annotation.getValue() instanceof IRI)
 					{
@@ -467,7 +468,7 @@ public class Ontology
 								String lang = val.getLang();
 								if(lang.equals(""))
 									lang = "en";
-								lex.add(id, name, lang, type, "", weight);
+								lex.add(o.getOntologyID().getOntologyIRI().toString(), id, name, lang, type, "", weight);
 							}
 						}
 					}
@@ -485,7 +486,7 @@ public class Ontology
 
 		//Start by adding the "related" property
 		int related = uris.addURI(SKOS.RELATED.toIRI().toString(),EntityType.OBJECT);
-		lex.add(related, SKOS.RELATED.toString(), "en", LexicalType.LOCAL_NAME,
+		lex.add(o.getOntologyID().getOntologyIRI().toString(), related, SKOS.RELATED.toString(), "en", LexicalType.LOCAL_NAME,
 				"", LexicalType.LOCAL_NAME.getDefaultWeight());
 		entities.add(related);
 		entityTypes.add(EntityType.OBJECT, related);
@@ -615,7 +616,7 @@ public class Ontology
 			{
 				type = LexicalType.LOCAL_NAME;
 				weight = type.getDefaultWeight();
-				lex.add(id, name, "en", type, "", weight);
+				lex.add(o.getOntologyID().getOntologyIRI().toString(), id, name, "en", type, "", weight);
 			}
 
 			//Now get the class's annotations (including imports)
@@ -637,7 +638,7 @@ public class Ontology
 						String lang = val.getLang();
 						if(lang.equals(""))
 							lang = "en";
-						lex.add(id, name, lang, type, "", weight);
+						lex.add(o.getOntologyID().getOntologyIRI().toString(), id, name, lang, type, "", weight);
 					}
 					else if(annotation.getValue() instanceof IRI)
 					{
@@ -651,7 +652,7 @@ public class Ontology
 								String lang = val.getLang();
 								if(lang.equals(""))
 									lang = "en";
-								lex.add(id, name, lang, type, "", weight);
+								lex.add(o.getOntologyID().getOntologyIRI().toString(), id, name, lang, type, "", weight);
 							}
 						}
 					}
@@ -764,7 +765,7 @@ public class Ontology
 						lang = "en";
 					type = LexicalType.LABEL;
 					weight = type.getDefaultWeight();
-					lex.add(id, name, lang, type, "", weight);
+					lex.add(o.getOntologyID().getOntologyIRI().toString(), id, name, lang, type, "", weight);
 					labelLanguages.add(lang);
 				}
 			}
@@ -777,7 +778,7 @@ public class Ontology
 				weight = type.getDefaultWeight();
 				if(labelLanguages.size() != 1)
 					lang = "en";
-				lex.add(id, localName, lang, type, "", weight);
+				lex.add(o.getOntologyID().getOntologyIRI().toString(), id, localName, lang, type, "", weight);
 			}
 			//If the property is functional, add it to the RelationshipMap
 			if(dp.isFunctional(o))
@@ -829,7 +830,7 @@ public class Ontology
 						lang = "en";
 					type = LexicalType.LABEL;
 					weight = type.getDefaultWeight();
-					lex.add(id, name, lang, type, "", weight);
+					lex.add(o.getOntologyID().getOntologyIRI().toString(), id, name, lang, type, "", weight);
 					labelLanguages.add(lang);
 				}
 			}
@@ -842,7 +843,7 @@ public class Ontology
 				weight = type.getDefaultWeight();
 				if(labelLanguages.size() != 1)
 					lang = "en";
-				lex.add(id, localName, lang, type, "", weight);
+				lex.add(o.getOntologyID().getOntologyIRI().toString(), id, localName, lang, type, "", weight);
 			}
 			//If the property is transitive and/or symmetric and/or functional
 			//add it to the RelationshipMap
@@ -973,7 +974,7 @@ public class Ontology
 					}
 					type = LexicalType.LABEL;
 					weight = type.getDefaultWeight();
-					lex.add(id, name, lang, type, "", weight);
+					lex.add(o.getOntologyID().getOntologyIRI().toString(), id, name, lang, type, "", weight);
 				}
 			}
 			//If the local name is not an alphanumeric code, add it to the lexicon
@@ -992,7 +993,7 @@ public class Ontology
 						lang = langCounts.keySet().iterator().next();
 					}
 				}
-				lex.add(id, localName, lang, type, "", weight);
+				lex.add(o.getOntologyID().getOntologyIRI().toString(), id, localName, lang, type, "", weight);
 			}
 			//Get the annotations of the Individual
 			for(OWLAnnotation annotation : i.getAnnotations(o))
@@ -1013,7 +1014,7 @@ public class Ontology
 						String localLang = val.getLang();
 						if(localLang.equals(""))
 							localLang = lang;
-						lex.add(id, name, localLang, type, "", weight);
+						lex.add(o.getOntologyID().getOntologyIRI().toString(), id, name, localLang, type, "", weight);
 					}
 				}
 				//Otherwise, literal annotations go to the ValueMap
@@ -1068,7 +1069,7 @@ public class Ontology
 				{
 					weight = type.getDefaultWeight();
 					for(OWLLiteral val : dataPropValues.get(prop))
-						lex.add(id, val.getLiteral(), "en", type, "", weight);
+						lex.add(o.getOntologyID().getOntologyIRI().toString(), id, val.getLiteral(), "en", type, "", weight);
 				}
 				//Otherwise, they go to the ValueMap
 				else
@@ -1439,7 +1440,7 @@ public class Ontology
 									if(t.equals(LexicalType.LABEL) || t.equals(LexicalType.LOCAL_NAME))
 										t = LexicalType.EXACT_SYNONYM;
 									double weight = t.getDefaultWeight();
-									lex.add(namedRelIndivId,name,p.getLanguage(),t,"",weight);
+									lex.add(o.getOntologyID().getOntologyIRI().toString(), namedRelIndivId,name,p.getLanguage(),t,"",weight);
 								}
 							}
 						}
@@ -1473,7 +1474,7 @@ public class Ontology
 					//And remove it as an annotation property
 					entityTypes.remove(EntityType.ANNOTATION, propId);
 					//Add its name to the Lexicon
-					lex.add(propId, getLocalName(propUri), "en", LexicalType.LOCAL_NAME,
+					lex.add(o.getOntologyID().getOntologyIRI().toString(), propId, getLocalName(propUri), "en", LexicalType.LOCAL_NAME,
 							"", LexicalType.LOCAL_NAME.getDefaultWeight());
 					//Add the relation to the RelationshipMap
 					rm.addIndividualRelationship(namedIndivId, namedRelIndivId, propId);

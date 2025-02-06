@@ -104,7 +104,7 @@ public class MediatingMatcher implements LexiconExtender, PrimaryMatcher
 			for(String n : names)
 			{
 				double sim = maps.get(s,hit);
-				source.add(s, n, "en", TYPE, uri, sim);
+				source.add(aml.getSource().getURI(), s, n, "en", TYPE, uri, sim);
 			}
 		}
 		Lexicon target = aml.getTarget().getLexicon();
@@ -129,7 +129,7 @@ public class MediatingMatcher implements LexiconExtender, PrimaryMatcher
 			for(String n : names)
 			{
 				double sim = maps.get(s,hit);
-				target.add(s, n, "en", TYPE, uri, sim);
+				target.add(aml.getTarget().getURI(), s, n, "en", TYPE, uri, sim);
 			}
 		}
 		time = System.currentTimeMillis()/1000 - time;

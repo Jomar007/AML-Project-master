@@ -18,6 +18,10 @@
 ******************************************************************************/
 package aml;
 
+import java.util.Set;
+
+import aml.settings.EntityType;
+
 public class Test
 {
 
@@ -26,16 +30,23 @@ public class Test
 	public static void main(String[] args) throws Exception
 	{
 		//Path to input ontology files (edit manually)
-		String sourcePath = "";
-		String targetPath = "";
-		String referencePath = "";
+		String sourcePath = "C:\\Alin\\Ontologias\\Anatomia\\human.owl";
+		String targetPath = "C:\\Alin\\Ontologias\\Anatomia\\mouse.owl";
+		String referencePath = "C:\\Alin\\Ontologias\\Anatomia\\reference.rdf";
 		//Path to save output alignment (edit manually, or leave blank for no evaluation)
-		String outputPath = "";
+		String outputPath = "C:\\Alin\\Alin\\AML-human-mouse.rdf";
 		
 		
 		AML aml = AML.getInstance();
+		
+		//202410
+		aml.readConfigFileStandardization();
+		
 		aml.openOntologies(sourcePath, targetPath);
-		aml.matchAuto();
+		
+		//aml.matchAuto();
+		
+		aml.matchManual();
 		
 		if(!referencePath.equals(""))
 		{

@@ -201,7 +201,7 @@ public class ThesaurusMatcher implements PrimaryMatcher
 					{
 						double weight = lex.getWeight(n,i) * CONFIDENCE;
 						if(weight >= thresh && !lex.contains(i, newName))
-							lex.add(i, newName, lex.getLanguages(n,i).iterator().next(), TYPE, SOURCE, weight);
+							lex.add("",i, newName, lex.getLanguages(n,i).iterator().next(), TYPE, SOURCE, weight);
 					}
 				}
 			}

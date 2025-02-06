@@ -73,12 +73,12 @@ public class Main
 		{
 			//Setup the parameters
 			//Path to input ontology files
-			String sourcePath = "";
-			String targetPath = "";
+			String sourcePath = "C:\\Alin\\Ontologias\\Anatomia\\human.owl";
+			String targetPath = "C:\\Alin\\Ontologias\\Anatomia\\mouse.owl";
 			//Path to input alignment (for evaluation / repair)
 			String inputPath = "";
 			//Path to output alignment file (if left blank, alignment is not saved)
-			String outputPath = "";
+			String outputPath = "C:\\Alin\\Alin\\AML-human-mouse.rdf";
 			//AgreementMakerLight settings
 			String mode = "";
 		

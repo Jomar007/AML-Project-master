@@ -32,6 +32,13 @@ import aml.settings.LexicalType;
 import aml.util.MapSorter;
 import aml.util.StringParser;
 
+// Abaixo para os analisadores léxicos
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 
 public class Lexicon
 {
@@ -83,6 +90,116 @@ public class Lexicon
 		langCount = new HashMap<String,Integer>(l.langCount);
 	}
 	
+	private static String regex_mouse ( String Termo )
+	{
+        StringBuilder intermediario = new StringBuilder();
+        StringBuilder retorno = new StringBuilder();
+        
+		InputStream targetStream = new ByteArrayInputStream(Termo.getBytes());
+		
+		InputStreamReader inputStreamReader = new InputStreamReader(targetStream);
+
+		BufferedReader in = new BufferedReader(inputStreamReader);
+		
+		regex_mouse.lexema_position=0;
+		regex_mouse.Valid_for_comparison=true;
+		regex_mouse.term_outside_the_lexical_pattern=false;
+		
+  		regex_mouse a = new regex_mouse(in);
+		
+		try 
+		{	
+	  		a.yylex();
+  		
+			in.close();
+		}
+		catch (Exception e) 
+		{
+		    System.out.println("Problems in lexical analysis!!!");		 
+		}
+		
+		if (regex_mouse.term_outside_the_lexical_pattern)
+		{
+			//System.out.println("Term outside the standard mouse lexical analysis pattern: "+Termo);
+			if (Termo.equalsIgnoreCase("layer_of_rods-and-cones"))
+			{
+		 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		 		for (int i=1;!(stackTrace[i].getClassName() + "." + stackTrace[i].getMethodName()).equalsIgnoreCase("Batch.Batch.main");i++)
+		 		{
+		 			System.out.println(stackTrace[i].getClassName() + "." + stackTrace[i].getMethodName());
+		 		}
+			}
+		}
+		
+		if (!regex_mouse.Valid_for_comparison)
+		{
+			retorno.append("");
+		}
+		else
+		{
+			for (int i=0;i<regex_mouse.lexema_position;i++)
+				intermediario.append(regex_mouse.Lexema[i].toLowerCase()+"_");
+			retorno = intermediario.deleteCharAt(intermediario.length() - 1); 
+		}
+		
+		return retorno.toString();
+	}
+	
+	private static String regex_human ( String Termo )
+	{
+        StringBuilder intermediario = new StringBuilder();
+        StringBuilder retorno = new StringBuilder();
+        
+		InputStream targetStream = new ByteArrayInputStream(Termo.getBytes());
+		
+		InputStreamReader inputStreamReader = new InputStreamReader(targetStream);
+
+		BufferedReader in = new BufferedReader(inputStreamReader);
+		
+		regex_human.lexema_position=0;
+		regex_human.Valid_for_comparison=true;
+		regex_human.term_outside_the_lexical_pattern=false;
+		
+  		regex_human a = new regex_human(in);
+		
+		try 
+		{	
+	  		a.yylex();
+  		
+			in.close();
+		}
+		catch (Exception e) 
+		{
+		    System.out.println("Problems in lexical analysis!!!");		 
+		}
+		
+		if (regex_human.term_outside_the_lexical_pattern)
+		{
+			//System.out.println("Term outside the standard human lexical analysis pattern: "+Termo);
+			if (Termo.equalsIgnoreCase("layer_of_rods-and-cones"))
+			{
+		 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		 		for (int i=1;!(stackTrace[i].getClassName() + "." + stackTrace[i].getMethodName()).equalsIgnoreCase("Batch.Batch.main");i++)
+		 		{
+		 			System.out.println(stackTrace[i].getClassName() + "." + stackTrace[i].getMethodName());
+		 		}
+			}
+		}
+		
+		if (!regex_human.Valid_for_comparison)
+		{
+			retorno.append("");
+		}
+		else
+		{
+			for (int i=0;i<regex_human.lexema_position;i++)
+				intermediario.append(regex_human.Lexema[i].toLowerCase()+"_");
+			retorno = intermediario.deleteCharAt(intermediario.length() - 1); 
+		}
+		
+		return retorno.toString();
+	}
+	
 //Public Methods
 
 	/**
@@ -94,8 +211,24 @@ public class Lexicon
 	 * @param source: the source of the entry (ontology URI, etc)
 	 * @param weight: the numeric weight of the entry, in [0.0,1.0]
 	 */
-	public void add(int id, String name, String language, LexicalType type, String source, double weight)
+	public void add(
+			String ontologyName, 
+			int id, 
+			String name, 
+			String language, 
+			LexicalType type, 
+			String source, 
+			double weight)
 	{
+
+		//202409
+		String standardization=AML.getStandardization();
+		
+		if (!ontologyName.equals("http://human.owl")
+		&&  !ontologyName.equals("http://mouse.owl"))
+			if (standardization.equalsIgnoreCase("LA"))
+				standardization="standard";
+		
 		//First ensure that the name is not null or empty
 		if(name == null || name.equals(""))
 			return;
@@ -109,48 +242,83 @@ public class Lexicon
 		//Get the type of the entity
 		EntityType e = uris.getType(id);
 		int index = getIndex(e);
-
-		//If the name is not in english we parse it as a formula
-		if(!language.equals("en"))
+		
+		if (standardization.equals("none"))
 		{
-			s = StringParser.normalizeFormula(name);
-			p = new Provenance(type, source, language, weight);
+			s = name;
+			p = new Provenance(type, source, language, weight);		
+			
+			entityNames[index].add(s,id,p);
+			nameEntities[index].add(id,s,p);
 		}
-		//Otherwise
 		else
+		if (standardization.equals("standard"))
 		{
-			//If it doesn't contain Latin characters, don't add it
-			if(!name.matches(".*[a-zA-Z].*"))
-				return;
-			//If it is a formula, parse it and label it as such
-			else if(StringParser.isFormula(name))
+			//If the name is not in english we parse it as a formula
+			if(!language.equals("en"))
 			{
 				s = StringParser.normalizeFormula(name);
-				p = new Provenance(LexicalType.FORMULA, source, language, weight);
-			}
-			//If it is a property, parse it as such
-			else if(e.equals(EntityType.DATA) || e.equals(EntityType.OBJECT))
-			{
-				s = StringParser.normalizeProperty(name);
 				p = new Provenance(type, source, language, weight);
 			}
-			//Otherwise, parse it normally
+			//Otherwise
 			else
 			{
-				s = StringParser.normalizeName(name);
-				p = new Provenance(type, source, language, weight);
+				//If it doesn't contain Latin characters, don't add it
+				if(!name.matches(".*[a-zA-Z].*"))
+					return;
+				//If it is a formula, parse it and label it as such
+				else if(StringParser.isFormula(name))
+				{
+					s = StringParser.normalizeFormula(name);
+					p = new Provenance(LexicalType.FORMULA, source, language, weight);
+				}
+				//If it is a property, parse it as such
+				else if(e.equals(EntityType.DATA) || e.equals(EntityType.OBJECT))
+				{
+					s = StringParser.normalizeProperty(name);
+					p = new Provenance(type, source, language, weight);
+				}
+				//Otherwise, parse it normally
+				else
+				{
+					s = StringParser.normalizeName(name);
+					p = new Provenance(type, source, language, weight);
+				}
 			}
+			
+			entityNames[index].add(s,id,p);
+			nameEntities[index].add(id,s,p);
 		}
-		//Then update the tables
-		entityNames[index].add(s,id,p);
-		nameEntities[index].add(id,s,p);
+		else
+		if (standardization.equals("LA"))
+		{
+			//202409
+			String LAName="";
+			
+			if (ontologyName.equals("http://human.owl"))
+				LAName = regex_human(name);
+			else
+			if (ontologyName.equals("http://mouse.owl"))
+				LAName = regex_mouse(name);
+			
+			if (!LAName.equals(""))
+			{
+				//20241022
+				// Eu já transformei em lowercase após a chamada do Regex
+				p = new Provenance(type, source, language, weight);	
+				entityNames[index].add(LAName,id,p);
+				nameEntities[index].add(id,LAName,p);			
+			}
+
+		}
+		
 		Integer i = langCount.get(language);
 		if(i == null)
 			langCount.put(language, 1);
 		else
 			langCount.put(language, i+1);
 	}
-	
+
 	/**
 	 * @param e: the EntityType to check in the Lexicon
 	 * @param name: the name to check in the Lexicon

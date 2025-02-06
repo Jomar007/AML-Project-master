@@ -21,6 +21,8 @@ package aml.ext;
 
 import java.util.Vector;
 
+import org.semanticweb.owlapi.model.OWLOntology;
+
 import aml.AML;
 import aml.ontology.Lexicon;
 import aml.ontology.Provenance;
@@ -35,12 +37,12 @@ public class ParenthesisExtender implements LexiconExtender
 	{
 		AML aml = AML.getInstance();
 		Lexicon source = aml.getSource().getLexicon();
-		extend(source);
+		extend(source,aml.getSource().getURI().toString());
 		Lexicon target = aml.getTarget().getLexicon();
-		extend(target);
+		extend(target,aml.getTarget().getURI().toString());
 	}
 	
-	private void extend(Lexicon l)
+	private void extend(Lexicon l, String ontologyName)
 	{
 		for(EntityType e : EntityType.values())
 		{
@@ -81,7 +83,7 @@ public class ParenthesisExtender implements LexiconExtender
 				Vector<Integer> tr = new Vector<Integer>(l.getInternalEntities(e, n));
 				for(Integer j : tr)
 					for(Provenance p : l.get(n, j))
-						l.add(j, newName, p.getLanguage(),
+						l.add(ontologyName, j, newName, p.getLanguage(),
 								LexicalType.INTERNAL_SYNONYM, p.getSource(), weight*p.getWeight());
 			}
 		}

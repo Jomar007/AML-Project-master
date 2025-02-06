@@ -139,6 +139,8 @@ public class AML
 	private boolean showAncestors = true;
 	private boolean showDescendants = true;
     private String language = "en";
+    //202409
+    private static String standardizaton = "standard";
 	
 //Constructors
 	
@@ -464,6 +466,12 @@ public class AML
 	public Set<String> getLanguages()
 	{
 		return languages;
+	}
+	
+	//202409
+	public static String getStandardization ()
+	{
+		return AML.standardizaton;
 	}
 
 	/**
@@ -888,11 +896,14 @@ public class AML
 		long time = System.currentTimeMillis()/1000;
 		System.out.println("Loading source ontology");	
 		source = new Ontology(src);
+        
 		time = System.currentTimeMillis()/1000 - time;
 		System.out.println(source.getURI() + " loaded in " + time + " seconds");
 		System.out.println("Classes: " + source.count(EntityType.CLASS));
 		System.out.println("Individuals: " + source.count(EntityType.INDIVIDUAL));
 		System.out.println("Properties: " + (source.count(EntityType.DATA)+source.count(EntityType.OBJECT)));
+		System.out.println("Names: " + source.getLexicon().nameCount(EntityType.CLASS));
+		
 		time = System.currentTimeMillis()/1000;
 		System.out.println("Loading target ontology");
 		target = new Ontology(tgt);
@@ -902,6 +913,7 @@ public class AML
 		System.out.println("Individuals: " + target.count(EntityType.INDIVIDUAL));
 		System.out.println("Properties: " + (target.count(EntityType.DATA)+target.count(EntityType.OBJECT)));
 		System.out.println("Names: " + target.getLexicon().nameCount(EntityType.CLASS));
+		
 		time = System.currentTimeMillis()/1000;
 		System.out.println("Running transitive closure on RelationshipMap");
 		rels.transitiveClosure();
@@ -979,6 +991,52 @@ public class AML
     public boolean primaryStringMatcher()
     {
 		return primaryStringMatcher;
+	}
+    
+    //202410
+	public void readConfigFileStandardization()
+	{
+		File conf = new File(dir + "store/config.ini");
+		if(!conf.canRead())
+		{
+			System.out.println("Warning: config.ini file not found");
+			System.out.println("Matching will proceed with default configuration");
+		}
+		else
+		{
+			try
+			{
+				System.out.println("Reading config.ini file");
+				BufferedReader in = new BufferedReader(new FileReader(conf));
+				String line;
+				Vector<MatchStep> selection = new Vector<MatchStep>();
+				while((line=in.readLine()) != null)
+				{
+					if(line.startsWith("#") || line.isEmpty())
+						continue;
+					String[] option = line.split("=");
+					if(option.length != 2)
+						continue;
+					option[0] = option[0].trim();
+					option[1] = option[1].trim();
+					if(option[0].equals("standardization"))
+					{
+						//202410
+						//System.out.println("Entrei em standardization : "+option[1]);
+						if(option[1].equalsIgnoreCase("none")||option[1].equalsIgnoreCase("LA"))
+							AML.setStandardization(option[1]);
+					}
+				}
+				in.close();
+				aml.setMatchSteps(selection);
+			}
+			catch(Exception e)
+			{
+				System.out.println("Error: Could not read config file");
+				e.printStackTrace();
+				System.out.println("Matching will proceed with default configuration");
+			}
+		}
 	}
     
 	public void readConfigFile()
@@ -1234,6 +1292,12 @@ public class AML
 		this.language = language;
 	}
 	
+	//202409
+	public static void setStandardization(String standardization)
+	{
+		AML.standardizaton = standardization;
+	}
+	
 	public void setLanguageSetting()
 	{
 		lang = LanguageSetting.getLanguageSetting();
@@ -1446,9 +1510,9 @@ public class AML
 				if(!l1.equals(l2))
 				{
 					Dictionary d = new Dictionary(l1,l2);
-					d.translateLexicon(source.getLexicon());
+					d.translateLexicon(source.getLexicon(),source.getURI());
 					d = new Dictionary(l2,l1);
-					d.translateLexicon(target.getLexicon());
+					d.translateLexicon(target.getLexicon(),target.getURI());
 				}
 			}
 		}
@@ -1457,12 +1521,12 @@ public class AML
 			for(String l1 : sLangs)
 			{
 				Dictionary d = new Dictionary(l1,"en");
-				d.translateLexicon(source.getLexicon());
+				d.translateLexicon(source.getLexicon(),source.getURI());
 			}
 			for(String l2 : tLangs)
 			{
 				Dictionary d = new Dictionary(l2,"en");
-				d.translateLexicon(target.getLexicon());
+				d.translateLexicon(target.getLexicon(),target.getURI());
 			}
 		}
 		languages = new HashSet<String>();

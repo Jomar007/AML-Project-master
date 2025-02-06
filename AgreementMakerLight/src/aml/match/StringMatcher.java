@@ -430,14 +430,16 @@ public class StringMatcher implements PrimaryMatcher, Rematcher, SecondaryMatche
 			Set<String> targetNames = tLex.getNames(tId);
 			if(sourceNames == null || targetNames == null)
 				return maxSim;
+
 			for(String s : sourceNames)
-			{
+			{	
 				if(sLex.getTypes(s,sId).contains(LexicalType.FORMULA))
 					continue;
 				weight = sLex.getCorrectedWeight(s, sId);
 				
 				for(String t : targetNames)
 				{
+					//System.out.println("Nome t : "+t);
 					if(tLex.getTypes(t,tId).contains(LexicalType.FORMULA))
 						continue;
 					sim = weight * tLex.getCorrectedWeight(t, tId);

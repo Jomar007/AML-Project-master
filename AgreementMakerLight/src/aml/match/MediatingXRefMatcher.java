@@ -96,7 +96,7 @@ public class MediatingXRefMatcher extends MediatingMatcher
 				for(String n : names)
 				{
 					double sim = src.get(s,hit) * ext.getWeight(n, hit);
-					source.getLexicon().add(s, n, "en", TYPE, uri, sim);
+					source.getLexicon().add(source.getURI(), s, n, "en", TYPE, uri, sim);
 				}
 			}
 		}
@@ -111,7 +111,7 @@ public class MediatingXRefMatcher extends MediatingMatcher
 				for(String n : names)
 				{
 					double sim = tgt.get(s,hit) * ext.getWeight(n, hit);
-					target.getLexicon().add(s, n, "en", TYPE, uri, sim);
+					target.getLexicon().add(target.getURI(), s, n, "en", TYPE, uri, sim);
 				}
 			}
 		}

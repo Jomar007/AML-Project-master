@@ -94,6 +94,7 @@ public class MediatorLexicon
 		//Otherwise, parse it normally
 		else
 			s = StringParser.normalizeName(name);
+		
 		//Then update the table
 		if(!entityNames.contains(s, classId) || entityNames.get(s, classId) < weight)
 		{
