@@ -1,1 +1,17 @@
+The test is performed by modifying the file AgreementMakerLight/src/aml/Test.java. The ontology names, the reference file name, and the output file name must be updated.
+
+The program worked when executed in Eclipse.
+
+In the file AgreementMakerLight/store/config.ini, the following lines was added:
+
+#Standardization (options: none, standard, LA)
+standardization=LA
+
+If you want to run it with AML's original standardizations, change the line to:
+
+standardization=standard
+
+To use the lexical analyzers, the following files were included:
+AgreementMakerLight/src/aml/ontology/regex_human.java
+AgreementMakerLight/src/aml/ontology/regex_mouse.java
 
