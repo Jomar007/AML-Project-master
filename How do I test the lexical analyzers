@@ -15,3 +15,4 @@ To use the lexical analyzers, the following files were included:
 AgreementMakerLight/src/aml/ontology/regex_human.java
 AgreementMakerLight/src/aml/ontology/regex_mouse.java
 
+The source code of the lexical analyzers can be found at https://osf.io/gc6jm/.
