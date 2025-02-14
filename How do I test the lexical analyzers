@@ -1,6 +1,6 @@
 The test is performed by modifying the file AgreementMakerLight/src/aml/Test.java. The ontology names, the reference file name, and the output file name must be updated.
 
-The program worked when executed in Eclipse.
+The program worked when executed in Eclipse. Eclipse displays a code error and asks whether you want to run the program anyway. The code error does not affect the testing of the lexical analyzer, so you can confirm that you want to proceed with execution.
 
 In the file AgreementMakerLight/store/config.ini, the following lines was added:
 
